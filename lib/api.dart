@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:live_exchange_rate_converter/secrets.dart';
+import 'package:secret_package/secret_package.dart';
 
-String apiKey = exchangeRateAPIKey;
+String apiKey = Secret().exchangeRateAPIKey;
 
 Future<CurrencyInfo> getCurrencyInfo({String? baseCurrency = "sgd"}) async {
   final response = await http.get(Uri.parse('https://v6.exchangerate-api.com/v6/$apiKey/latest/$baseCurrency'));

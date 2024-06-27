@@ -31,6 +31,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  secret_package:
+    git:
+     url: git@github.com:jellymiso/private-repo.git
+     ref: master
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
