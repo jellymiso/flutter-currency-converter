@@ -1,0 +1,186 @@
+name: live_exchange_rate_converter
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.1 <4.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  responsive_sizer: ^3.3.1
+  dotted_border: ^2.1.0
+  r_dotted_line_border: ^0.1.1
+  currency_formatter: ^2.2.1
+  currency_text_input_formatter: ^2.2.3
+  intl: ^0.19.0
+  http: ^1.2.1
+  session_storage: ^0.0.1
+  currency_icons: ^0.3.0
+  path: ^1.9.0
+  dropdown_button2: ^2.3.9
+  universal_html: ^2.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/empty.png
+    - assets/images/background.png
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Overpass
+      fonts:
+        - asset: fonts/Overpass/Overpass-Black.ttf
+          weight: 900
+        - asset: fonts/Overpass/Overpass-BlackItalic.ttf
+          style: italic
+          weight: 900
+        - asset: fonts/Overpass/Overpass-ExtraBold.ttf
+          weight: 800
+        - asset: fonts/Overpass/Overpass-ExtraBoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: fonts/Overpass/Overpass-Bold.ttf
+          weight: 700
+        - asset: fonts/Overpass/Overpass-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: fonts/Overpass/Overpass-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Overpass/Overpass-SemiBoldItalic.ttf
+          style: italic
+          weight: 600
+        - asset: fonts/Overpass/Overpass-Medium.ttf
+          weight: 500
+        - asset: fonts/Overpass/Overpass-MediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: fonts/Overpass/Overpass-Regular.ttf
+          weight: 400
+        - asset: fonts/Overpass/Overpass-Italic.ttf
+          style: italic
+          weight: 400
+        - asset: fonts/Overpass/Overpass-Light.ttf
+          weight: 300
+        - asset: fonts/Overpass/Overpass-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Overpass/Overpass-ExtraLight.ttf
+          weight: 300
+        - asset: fonts/Overpass/Overpass-ExtraLightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Overpass/Overpass-Thin.ttf
+          weight: 100
+        - asset: fonts/Overpass/Overpass-ThinItalic.ttf
+          style: italic
+          weight: 100
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat/Montserrat-Black.ttf
+          weight: 900
+        - asset: fonts/Montserrat/Montserrat-BlackItalic.ttf
+          style: italic
+          weight: 900
+        - asset: fonts/Montserrat/Montserrat-ExtraBold.ttf
+          weight: 800
+        - asset: fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: fonts/Montserrat/Montserrat-Bold.ttf
+          weight: 700
+        - asset: fonts/Montserrat/Montserrat-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: fonts/Montserrat/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Montserrat/Montserrat-SemiBoldItalic.ttf
+          style: italic
+          weight: 600
+        - asset: fonts/Montserrat/Montserrat-Medium.ttf
+          weight: 500
+        - asset: fonts/Montserrat/Montserrat-MediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: fonts/Montserrat/Montserrat-Regular.ttf
+          weight: 400
+        - asset: fonts/Montserrat/Montserrat-Italic.ttf
+          style: italic
+          weight: 400
+        - asset: fonts/Montserrat/Montserrat-Light.ttf
+          weight: 300
+        - asset: fonts/Montserrat/Montserrat-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Montserrat/Montserrat-ExtraLight.ttf
+          weight: 300
+        - asset: fonts/Montserrat/Montserrat-ExtraLightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: fonts/Montserrat/Montserrat-Thin.ttf
+          weight: 100
+        - asset: fonts/Montserrat/Montserrat-ThinItalic.ttf
+          style: italic
+          weight: 100
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
