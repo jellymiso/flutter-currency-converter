@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:universal_html/js.dart' as js;
 import "package:intl/intl.dart";
 import 'package:flutter/material.dart';
@@ -8,8 +9,8 @@ import 'package:live_exchange_rate_converter/api.dart';
 import 'package:live_exchange_rate_converter/components.dart';
 import 'package:live_exchange_rate_converter/components/themed_textbox.dart';
 
-void main() {
-  
+Future<void> main() async {
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 

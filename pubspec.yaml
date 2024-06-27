@@ -28,30 +28,20 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  currency_text_input_formatter: ^2.2.3
   flutter:
     sdk: flutter
 
-  secret_package:
-    git:
-     url: git@github.com:jellymiso/private-repo.git
-     ref: master
+  flutter_dotenv: ^5.1.0
+  http: ^1.2.1
+  intl: ^0.19.0
+  session_storage: ^0.0.1
+  universal_html: ^2.2.4
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
-  responsive_sizer: ^3.3.1
-  dotted_border: ^2.1.0
-  r_dotted_line_border: ^0.1.1
-  currency_formatter: ^2.2.1
-  currency_text_input_formatter: ^2.2.3
-  intl: ^0.19.0
-  http: ^1.2.1
-  session_storage: ^0.0.1
-  currency_icons: ^0.3.0
-  path: ^1.9.0
-  dropdown_button2: ^2.3.9
-  universal_html: ^2.2.4
+
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +67,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/images/empty.png
     - assets/images/background.png
 

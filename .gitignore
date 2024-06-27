@@ -1,5 +1,6 @@
 # Security related
 /lib/secrets.dart
+.env
 
 # Miscellaneous
 *.class
