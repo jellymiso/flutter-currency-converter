@@ -259,6 +259,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  secret_package:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "3c5dae0f0404701959e7cf9751f283385eaff7fc"
+      url: "git@github.com:jellymiso/private-repo.git"
+    source: git
+    version: "0.0.1"
   session_storage:
     dependency: "direct main"
     description:
