@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:universal_html/js.dart' as js;
 import "package:intl/intl.dart";
 import 'package:flutter/material.dart';
@@ -9,10 +8,7 @@ import 'package:live_exchange_rate_converter/api.dart';
 import 'package:live_exchange_rate_converter/components.dart';
 import 'package:live_exchange_rate_converter/components/themed_textbox.dart';
 
-Future<void> main() async {
-  if(!const bool.hasEnvironment("EXCHANGERATE_API_KEY")){
-    await dotenv.load(fileName: '.env');
-  }
+void main() {
   runApp(const MyApp());
 }
 

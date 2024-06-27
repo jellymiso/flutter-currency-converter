@@ -11,6 +11,7 @@
                 "chrome",
                 "--web-renderer",
                 "html",
+                "--dart-define=EXCHANGERATE_API_KEY=a42f45e9c0944a8e58e6dcad"
             ]
         },
     ]
