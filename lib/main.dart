@@ -10,7 +10,9 @@ import 'package:live_exchange_rate_converter/components.dart';
 import 'package:live_exchange_rate_converter/components/themed_textbox.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
+  if(!const bool.hasEnvironment("EXCHANGERATE_API_KEY")){
+    await dotenv.load(fileName: '.env');
+  }
   runApp(const MyApp());
 }
 
