@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-String apiKey = dotenv.env['EXCHANGERATE_API_KEY']!;
+String apiKey = const bool.hasEnvironment("EXCHANGERATE_API_KEY") 
+  ? const String.fromEnvironment("EXCHANGERATE_API_KEY") 
+  : dotenv.env['EXCHANGERATE_API_KEY']!;
 
 Future<CurrencyInfo> getCurrencyInfo({String? baseCurrency = "sgd"}) async {
   final response = await http.get(Uri.parse('https://v6.exchangerate-api.com/v6/$apiKey/latest/$baseCurrency'));
