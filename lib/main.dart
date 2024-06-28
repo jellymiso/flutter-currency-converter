@@ -62,8 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
 
-    debugPrint("init state");
-
     if(session['sgd-to-usd'] == null){
       setState(() {
         getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency).then((value){

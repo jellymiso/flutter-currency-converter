@@ -33,7 +33,7 @@ RUN flutter config --enable-web
 RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
-RUN flutter build web
+RUN flutter build web --release --dart-define=EXCHANGERATE_API_KEY=a42f45e9c0944a8e58e6dcad
 
 # Record the exposed port
 EXPOSE 5000
