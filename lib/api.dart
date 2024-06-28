@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-String apiKey = const String.fromEnvironment("EXCHANGERATE_API_KEY") ;
+const String apiKey = String.fromEnvironment("EXCHANGERATE_API_KEY") ;
+
 
 Future<CurrencyInfo> getCurrencyInfo({String? baseCurrency = "sgd"}) async {
+
   final response = await http.get(Uri.parse('https://v6.exchangerate-api.com/v6/$apiKey/latest/$baseCurrency'));
   
   if (response.statusCode == 200) {
@@ -33,7 +36,7 @@ Future<double> getRates({String baseCurrency = "sgd", String targetCurrency = "u
     }
   } else {
     // If the server did not return a 200 OK response,
-    // then throw an exception.
+    // then throw an exception, check run method.
     throw Exception('Failed to load currency info.');
   }
 }

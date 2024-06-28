@@ -2,15 +2,16 @@
     "version": "0.0.1",
     "configurations": [
         {
-            "name": "debug_option_1",
+            "name": "Dart",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
+            "program": "lib/main.dart",
             "args": [
                 "-d",
                 "chrome",
-                "--web-renderer",
-                "html",
+                // "--web-renderer",
+                // "html",
                 "--dart-define=EXCHANGERATE_API_KEY=a42f45e9c0944a8e58e6dcad"
             ]
         },

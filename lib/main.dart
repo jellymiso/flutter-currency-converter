@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:live_exchange_rate_converter/components/currency_selection.dart';
 import 'package:universal_html/js.dart' as js;
 import "package:intl/intl.dart";
 import 'package:flutter/material.dart';
@@ -9,7 +10,17 @@ import 'package:live_exchange_rate_converter/components.dart';
 import 'package:live_exchange_rate_converter/components/themed_textbox.dart';
 
 void main() {
-  runApp(const MyApp());
+  final session = SessionStorage();
+  if(session['sgd-to-usd'] == null){
+    getRates(baseCurrency: "sgd", targetCurrency: "usd").then((value){
+      session['sgd-to-usd'] = value.toString();
+      session['usd-to-sgd'] = (1/value).toStringAsFixed(8);
+      runApp(const MyApp());
+    });
+  }
+  else{
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -40,25 +51,45 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  String selectedAmtValue = "sgd";
-  String selectedConvertToValue = "usd";
+  String baseCurrency = "sgd";
+  String targetCurrency = "usd";
   NumberFormat currencyFormatter = NumberFormat("#,##0.00", "en_US");
   TextEditingController amtValInputController = TextEditingController(text: "100.00");
   TextEditingController convertedToValInputController = TextEditingController();
-  late Future<CurrencyInfo> currencyInfo;
   final session = SessionStorage();
   bool isRefreshingRates = false;
 
   @override
   void initState() {
-    currencyInfo = getCurrencyInfo();
-    debugPrint("Session: ${session['$selectedAmtValue-to-$selectedConvertToValue']}");
-    if(session['$selectedAmtValue-to-$selectedConvertToValue'] == null){
-      getRates(baseCurrency: selectedAmtValue, targetCurrency: selectedConvertToValue).then((value){
-        session['$selectedAmtValue-to-$selectedConvertToValue'] = value.toString();
+
+    debugPrint("init state");
+
+    if(session['sgd-to-usd'] == null){
+      setState(() {
+        getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency).then((value){
+          session['sgd-to-usd'] = value.toString();
+          session['sgd-to-usd'] = (1/value).toStringAsFixed(8);
+        });
       });
     }
 
+    amtValInputController.addListener((){
+      setState(() {
+        if(session['$baseCurrency-to-$targetCurrency'] != null){
+          convertedToValInputController.text = (double.parse(amtValInputController.text.replaceAll(",", "")) * double.parse(session['$baseCurrency-to-$targetCurrency']!)).toStringAsFixed(2);
+        }
+        else{
+          getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency).then((value){
+            convertedToValInputController.text = (double.parse(amtValInputController.text.replaceAll(",", "")) * value).toStringAsFixed(2);
+          });
+        }
+      });
+    });
+    convertedToValInputController.addListener((){
+      setState(() {
+        // amtValInputController.text = convertedToValInputController.text.replaceAll(",", "");
+      });
+    });
 
     super.initState();
   }
@@ -73,7 +104,25 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
-//TODO: -> functions, and fix swap
+    void saveRates(String baseCurrency, String targetCurrency, {double? rate}){
+      if (rate == null){
+          getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency).then((value){
+            session['$baseCurrency-to-$targetCurrency'] = value.toString();
+            session['$targetCurrency-to-$baseCurrency'] = (1/value).toStringAsFixed(8);
+          });
+      }
+      else{
+        session['$baseCurrency-to-$targetCurrency'] = rate.toString();
+        session['$targetCurrency-to-$baseCurrency'] = (1/rate).toStringAsFixed(8);
+      }
+    }
+
+    String getRatesMessage(){
+      double rate = double.parse(session['$baseCurrency-to-$targetCurrency']!);
+      return "1 $baseCurrency = ${rate.toString()} $targetCurrency";
+    }
+
+//TODO: -> bugs: change the base currency then click twice on swap, then change target currency, somehow base currency gets updated
 
     return Stack(
       children: [
@@ -135,23 +184,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       AppComponent.appTitle('CURRENCY CONVERTER'), 
                       SizedBox(
-                        height: ResponsiveWidget.isMaxScreen(context)
+                        height: (ResponsiveWidget.isMaxScreen(context) || ResponsiveWidget.isLargeScreen(context))
                         ? 35
-                        : ResponsiveWidget.isLargeScreen(context)
-                          ? 35
-                          : ResponsiveWidget.isMediumScreen(context) 
-                            ? 15
-                            : null
+                        : ResponsiveWidget.isMediumScreen(context) 
+                          ? 15
+                          : null
                       ),
-                      AppComponent.quickSelections(selectedAmtValue, quickSelectAmount),
+                      AppComponent.quickSelections(baseCurrency, quickSelectAmount),
                       SizedBox(
-                        height: ResponsiveWidget.isMaxScreen(context)
+                        height: (ResponsiveWidget.isMaxScreen(context) || ResponsiveWidget.isLargeScreen(context))
                         ? 35
-                        : ResponsiveWidget.isLargeScreen(context)
-                          ? 35
-                          : ResponsiveWidget.isMediumScreen(context) 
-                            ? 15
-                            : 25
+                        : ResponsiveWidget.isMediumScreen(context) 
+                          ? 15
+                          : 25
                       ),
                       Wrap(
                         alignment: WrapAlignment.center,
@@ -165,65 +210,60 @@ class _MyHomePageState extends State<MyHomePage> {
                                 labelText: "Amount", 
                                 textboxInputType: TextInputType.number,
                                 textAlign: TextAlign.right,
-                                prefix:AppComponent.currencySelection(selectedAmtValue, (value) {  
+                                prefix:CurrencySelection(selectedValue:  baseCurrency, onSelectionChanged: (value) {  
+                                  isRefreshingRates = true;
                                   setState(() {
-                                    selectedAmtValue = value!;
+                                    baseCurrency = value!;
                                   });
+                                  Timer(const Duration(seconds: 1), () {
+                                    setState(() {
+                                      isRefreshingRates = false;
+                                    });
+                                  });
+                                  //needed to force update for onchange listener to pickup
+                                  amtValInputController.text = "${amtValInputController.text}0";
+                                  amtValInputController.text = double.parse(amtValInputController.text.replaceAll(",","")).toStringAsFixed(2);
                                 }),
-                                onTextUpdate: (value) {
-                                
-                                },
+                                onTextUpdate: (value) { },
                               ),
                               
                               (ResponsiveWidget.isSmallScreen(context) || ResponsiveWidget.isTinyScreen(context))
                               ? const SizedBox.shrink()
                               : isRefreshingRates 
-                                ? Center(
-                                    child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                      child: const CircularProgressIndicator(strokeWidth: 2)
-                                    )
+                                ? Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                    child: const CircularProgressIndicator(strokeWidth: 2)
                                   )
-                                : (session['$selectedAmtValue-to-$selectedConvertToValue'] == null 
-                                    && session['$selectedConvertToValue-to-$selectedAmtValue'] == null)
+                                : session['$baseCurrency-to-$targetCurrency'] == null
                                   ? FutureBuilder(
-                                      future: getRates(baseCurrency: selectedAmtValue, targetCurrency: selectedConvertToValue), 
+                                      future: getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency), 
                                       builder:(context, snapshot) {
                                         if(snapshot.hasError){
-                                          return Center(
-                                            child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                              child: const CircularProgressIndicator(strokeWidth: 2)
-                                            )
+                                          return Container(
+                                            width: 10, height: 35, 
+                                            padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                            color:Colors.red, 
+                                            child: const CircularProgressIndicator(strokeWidth: 2)
                                           );
                                         }
                                         else{
                                           if(snapshot.hasData){ 
-                                            session['$selectedAmtValue-to-$selectedConvertToValue'] = snapshot.data!.toStringAsFixed(4);
-                                            session['$selectedConvertToValue-to-$selectedAmtValue'] = (1/snapshot.data!).toStringAsFixed(4);
-                                            return Text("1 $selectedAmtValue = ${
-                                              double.parse(session['$selectedAmtValue-to-$selectedConvertToValue']!).toStringAsFixed(4)
-                                            } $selectedConvertToValue", 
+                                            saveRates(baseCurrency, targetCurrency, rate: snapshot.data!);
+                                                  
+                                            return Text(
+                                              getRatesMessage(), 
                                               textAlign: TextAlign.left, 
                                               style: const TextStyle(fontWeight: FontWeight.w400,color: Color(0xffFDFBF6), fontFamily: "Overpass", fontSize: 14, height: 2.5),
                                             );
                                           }
                                           else{
-                                            return Center(
-                                              child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                                child: const CircularProgressIndicator(strokeWidth: 2)
-                                              )
+                                            return Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                              child: const CircularProgressIndicator(strokeWidth: 2)
                                             );
                                           }
                                         }
                                       }
                                     )
-                                  : Text("1 $selectedAmtValue = ${
-                                      double.parse(
-                                        (session['$selectedAmtValue-to-$selectedConvertToValue'] 
-                                          ?? ['$selectedConvertToValue-to-$selectedAmtValue']
-                                        ) as String
-                                      ).toStringAsFixed(4)
-                                      
-                                    } $selectedConvertToValue", 
+                                  : Text(getRatesMessage(), 
                                       textAlign: TextAlign.left, 
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w400,color: Color(0xffFDFBF6), fontFamily: "Overpass", fontSize: 14, height: 2.5
@@ -240,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         style: TextStyle(color: Color(0xffFDFBF6), fontFamily: "Overpass", fontWeight: FontWeight.w400, fontSize: 14, height: 0.75)
                                       ),
                                       TextSpan(
-                                        text:DateFormat('dd MMM yyyy').format(DateTime.now()), 
+                                        text: DateFormat('dd MMM yyyy').format(DateTime.now()), 
                                         style: const TextStyle(color: Color(0xffDBB86B), fontFamily: "Overpass", fontWeight: FontWeight.w600, fontSize: 14, height: 0.75)
                                       )
                                     ],
@@ -265,14 +305,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           AppComponent.swapCurrencyButton(() {
                             setState(() {
                               isRefreshingRates = true;
-                              String tempStore = selectedAmtValue;
-                              selectedAmtValue = selectedConvertToValue;
-                              selectedConvertToValue = tempStore;
+                              String tempStore = baseCurrency;
+                              baseCurrency = targetCurrency;
+                              targetCurrency = tempStore;
+
                               Timer(const Duration(seconds: 1), () {
                                 setState(() {
                                   isRefreshingRates = false;
                                 });
                               });
+                              //needed to force update for onchange listener to pickup
+                              amtValInputController.text = "${amtValInputController.text}0";
+                              amtValInputController.text = double.parse(amtValInputController.text.replaceAll(",","")).toStringAsFixed(2);
                             }); 
                           }),
                           SizedBox(
@@ -286,73 +330,74 @@ class _MyHomePageState extends State<MyHomePage> {
                             onTextUpdate:(p0) {
                               
                             },
-                            textController: convertedToValInputController = TextEditingController(
-                              text: "100.00" 
-                            ),
+                            textController: convertedToValInputController.text == "" 
+                              ? TextEditingController(
+                                  text: 
+                                  (
+                                    double.parse(amtValInputController.text.replaceAll(",", "")) * double.parse(session['$baseCurrency-to-$targetCurrency']!)
+                                  ).toStringAsFixed(2)
+                              ) 
+                              : convertedToValInputController,
                             labelText: "Converted", 
                             textboxInputType: TextInputType.number,
                             textAlign: TextAlign.right,
-                            prefix: AppComponent.currencySelection(selectedConvertToValue, (value) { 
+                            prefix: CurrencySelection(selectedValue:  targetCurrency, onSelectionChanged: (value) { 
+                              isRefreshingRates = true;
+
                               setState(() {
-                                selectedConvertToValue = value!;
+                                targetCurrency = value!;
+                                saveRates(baseCurrency, targetCurrency);
                               });
+
+                              Timer(const Duration(seconds: 1), () {
+                                setState(() {
+                                  isRefreshingRates = false;
+                                });
+                              });
+                              //needed to force update for onchange listener to pickup
+                              amtValInputController.text = "${amtValInputController.text}0";
+                              amtValInputController.text = double.parse(amtValInputController.text.replaceAll(",","")).toStringAsFixed(2);
+
                             })
                           ),
                           (ResponsiveWidget.isSmallScreen(context) || ResponsiveWidget.isTinyScreen(context))
-                            ? Padding(
-                                padding: ResponsiveWidget.isSmallScreen(context) 
-                                  ? const EdgeInsets.fromLTRB(0,0, 50,0) 
-                                  : const EdgeInsets.fromLTRB(0,0, 75,0),
+                            ? Center(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+
                                   children:[
                                     isRefreshingRates 
-                                    ? Center(
-                                        child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                          child: const CircularProgressIndicator(strokeWidth: 2)
-                                        )
+                                    ? Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                        child: const CircularProgressIndicator(strokeWidth: 2)
                                       )
-                                    : (session['$selectedAmtValue-to-$selectedConvertToValue'] == null 
-                                        && session['$selectedConvertToValue-to-$selectedAmtValue'] == null)
+                                    : (session['$baseCurrency-to-$targetCurrency'] == null 
+                                        && session['$targetCurrency-to-$baseCurrency'] == null)
                                       ? FutureBuilder(
-                                          future: getRates(baseCurrency: selectedAmtValue, targetCurrency: selectedConvertToValue), 
+                                          future: getRates(baseCurrency: baseCurrency, targetCurrency: targetCurrency), 
                                           builder:(context, snapshot) {
                                             if(snapshot.hasError){
-                                              return Center(
-                                                child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                                  child: const CircularProgressIndicator(strokeWidth: 2)
-                                                )
+                                              return Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                                child: const CircularProgressIndicator(strokeWidth: 2)
                                               );
                                             }
                                             else{
                                               if(snapshot.hasData){ 
-                                                session['$selectedAmtValue-to-$selectedConvertToValue'] = snapshot.data!.toStringAsFixed(4);
-                                                session['$selectedConvertToValue-to-$selectedAmtValue'] = (1/snapshot.data!).toStringAsFixed(4);
-                                                return Text("1 $selectedAmtValue = ${
-                                                  double.parse(session['$selectedAmtValue-to-$selectedConvertToValue']!).toStringAsFixed(4)
-                                                } $selectedConvertToValue", 
+                                                saveRates(baseCurrency, targetCurrency, rate: snapshot.data!);
+
+                                                return Text(getRatesMessage(), 
                                                   textAlign: ResponsiveWidget.isSmallScreen(context) ? TextAlign.center : TextAlign.left, 
                                                   style: const TextStyle(fontWeight: FontWeight.w400,color: Color(0xffFDFBF6), fontFamily: "Overpass", fontSize: 14, height: 2.5),
                                                 );
                                               }
                                               else{
-                                                return Center(
-                                                  child: Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
-                                                    child: const CircularProgressIndicator(strokeWidth: 2)
-                                                  )
+                                                return Container(width: 10, height: 35, padding: const EdgeInsets.fromLTRB(0,10,0,15), 
+                                                  child: const CircularProgressIndicator(strokeWidth: 2)
                                                 );
                                               }
                                             }
                                           }
                                         )
-                                      : Text("1 $selectedAmtValue = ${
-                                          double.parse(
-                                            (session['$selectedAmtValue-to-$selectedConvertToValue'] 
-                                              ?? ['$selectedConvertToValue-to-$selectedAmtValue']
-                                            ) as String
-                                          ).toStringAsFixed(4)
-                                          
-                                        } $selectedConvertToValue", 
+                                      : Text(getRatesMessage(), 
                                           textAlign: ResponsiveWidget.isSmallScreen(context) ? TextAlign.center : TextAlign.left, 
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w400,color: Color(0xffFDFBF6), fontFamily: "Overpass", fontSize: 14, height: 2.5

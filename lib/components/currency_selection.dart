@@ -37,11 +37,10 @@ class CurrencySelection extends StatelessWidget{
                   Image.asset(
                     cacheHeight: 16,
                     cacheWidth: 24,
-                    'icons/currency/${currency[0]}.png',
+                    'assets/images/currency-icons/${currency[0]}.png',
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset('assets/images/empty.png', height: 16, width: 24,);
                     },
-                    package: 'currency_icons', 
                     height: 16,
                     width: 24,
                   ),
