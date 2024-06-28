@@ -33,16 +33,13 @@ class CurrencySelection extends StatelessWidget{
               value: currency[0].toLowerCase(),
               child: Row(
                 children: [ 
-                  
-                  Image.asset(
-                    cacheHeight: 16,
-                    cacheWidth: 24,
-                    'assets/images/currency-icons/${currency[0]}.png',
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/images/empty.png', height: 16, width: 24,);
-                    },
-                    height: 16,
+                  Image(
                     width: 24,
+                    height: 16,
+                    image: AssetImage('assets/images/currency-icons/${currency[0]}.png'),
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Image( image: AssetImage('assets/images/empty.png'), height: 16, width: 24,);
+                    }
                   ),
                   const SizedBox(width: 5),
                   Text(currency[0].toUpperCase(), style: const TextStyle(color: Color(0xffFDFBF6)),)
