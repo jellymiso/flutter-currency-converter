@@ -36,7 +36,7 @@ class CurrencySelection extends StatelessWidget{
                   Image(
                     width: 24,
                     height: 16,
-                    image: AssetImage('assets/images/${currency[0]}.png'),
+                    image: AssetImage('assets/images/${currency[0].toLowerCase()}.png'),
                     errorBuilder: (context, error, stackTrace) {
                       return const Image( image: AssetImage('assets/images/empty.png'), height: 16, width: 24,);
                     }
