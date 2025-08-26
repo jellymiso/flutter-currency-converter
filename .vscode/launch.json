@@ -1,0 +1,19 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "Dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "program": "lib/main.dart",
+            "args": [
+                "-d",
+                "chrome",
+                // "--web-renderer",
+                // "html",
+                "--dart-define-from-file=.env"
+            ]
+        },
+    ]
+}
