@@ -13,7 +13,7 @@
                 // "--web-renderer",
                 // "html",
                 "--dart-define-from-file=.env"
-            ]
+            ] 
         },
     ]
 }

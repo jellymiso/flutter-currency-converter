@@ -1,0 +1,7 @@
+{
+  "name": "flutter-currency-converter",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Vercel will use vercel.json for the build process'"
+  }
+}

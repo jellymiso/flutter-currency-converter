@@ -1,6 +1,6 @@
-# live_exchange_rate_converter
+# Live Currency Converter
 
 Live Exchange Rate Converter
-Check it out: [https://live-currency-converter.vercel.app/](https://live-currency-converter.vercel.app/)
+Check it out: [https://live-exchange-rate-converter.vercel.app/](https://live-exchange-rate-converter.vercel.app/)
 
 
