@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      title: 'Currency Converter - Made with love by Jeremy Soh & Powered by flutter web',
+      title: 'Live Currency Converter',
+      
       theme: ThemeData(
         fontFamily: "Overpass",
         useMaterial3: true,
